@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { createGlobalStyles } from "@/styles/global";
 import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "@/styles/colors";
 
 
 type HeaderProps = {
@@ -23,7 +24,7 @@ export default function Header({ title }: HeaderProps) {
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 10,
-      }}
+            }}
     >
       <Text style={styles.stepTitle}>{title}</Text>
       <TouchableOpacity onPress={() => router.push("/settings")}>

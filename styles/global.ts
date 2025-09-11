@@ -111,7 +111,6 @@ export const createGlobalStyles = (isDark: boolean) => {
       marginHorizontal: 4,
       flexDirection: "row",     // horizontal layout
       alignItems: "center",     // vertically center items
-      justifyContent: "space-between", // space text and icon horizontally
       minHeight: 60,
       width: "100%",      // ensure some height for smaller texts
     },

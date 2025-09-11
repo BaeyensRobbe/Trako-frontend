@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CircularProgress from "@/components/CircularProgress";
 import { canTickToday } from "@/utilities/canTickToday";
 import Header from "@/components/Header";
+import HabitDetails from "@/components/HabitDetails";
 
 export default function HabitListScreen() {
   const router = useRouter();
@@ -120,62 +121,69 @@ export default function HabitListScreen() {
     <View style={{ height: 1, backgroundColor: isDark ? "#333" : "#ddd" }} />
   )}
   renderItem={({ item }) => (
-    <TouchableOpacity
-      onPress={() => openMenu(item)}
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingVertical: 12,
-        paddingHorizontal: 8,
-      }}
-    >
-      {/* Habit info */}
-      <View>
-        <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 16, fontWeight: "600" }}>
-          {item.name}
-        </Text>
-        <Text style={{ color: "#9b5de5", marginTop: 2, fontSize: 12 }}>
-          🔥 {item.streak || 0} day streak
-        </Text>
-      </View>
+//     <TouchableOpacity
+//       onPress={() => openMenu(item)}
+//       style={{
+//         flexDirection: "row",
+//         justifyContent: "space-between",
+//         alignItems: "center",
+//         paddingVertical: 12,
+//         paddingHorizontal: 8,
+//       }}
+//     >
+//       {/* Habit info */}
+//       <View>
+//         <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 16, fontWeight: "600" }}>
+//           {item.name}
+//         </Text>
+//         <Text style={{ color: "#9b5de5", marginTop: 2, fontSize: 12 }}>
+//           🔥 {item.streak || 0} day streak
+//         </Text>
+//       </View>
 
-      {/* Completion circle */}
-      <TouchableOpacity
-        onPress={(e) => {
-          e.stopPropagation();
-          if (canTickToday(item)) toggleCompletion(item);
-          else alert("This habit cannot be completed today.");
-        }}
-        style={{
-          width: 24,
-          height: 24,
-          borderRadius: 12,
-          borderWidth: 2,
-          borderColor: "#9b5de5",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: item.done ? "#9b5de5" : "transparent",
-          opacity: canTickToday(item) ? 1 : 0.3,
-        }}
-      >
-        {item.done && <Text style={{ color: "#fff", fontWeight: "bold" }}>✔</Text>}
-      </TouchableOpacity>
-    </TouchableOpacity>
+//       {/* Completion circle */}
+//       <TouchableOpacity
+//         onPress={(e) => {
+//           e.stopPropagation();
+//           if (canTickToday(item)) toggleCompletion(item);
+//           else alert("This habit cannot be completed today.");
+//         }}
+//         style={{
+//           width: 24,
+//           height: 24,
+//           borderRadius: 12,
+//           borderWidth: 2,
+//           borderColor: "#9b5de5",
+//           justifyContent: "center",
+//           alignItems: "center",
+//           backgroundColor: item.done ? "#9b5de5" : "transparent",
+//           opacity: canTickToday(item) ? 1 : 0.3,
+//         }}
+//       >
+//         {item.done && <Text style={{ color: "#fff", fontWeight: "bold" }}>✔</Text>}
+//       </TouchableOpacity>
+//     </TouchableOpacity>
+    <HabitDetails
+      habit={item}
+      onEdit={(habit) => router.push({ pathname: "/editHabit", params: { id: habit.id } })}
+      onDelete={handleDelete}
+    />
   )}
+  
+
+
+//       {/* Progress Summary */}
+//       <View style={{ marginBottom: 16, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+//         <CircularProgress size={32} strokeWidth={4} progress={progress} />
+//         <Text style={{ color: "#aaa", fontSize: 16, marginLeft: 12 }}>
+//           <Text style={{ color: "#fff" }}>{completedCount}</Text>
+//           {" / "}
+//           <Text style={{ color: "#fff" }}>{habits.length}</Text>
+//           {" habits completed"}
+//         </Text>
+//       </View>
+
 />
-
-      {/* Progress Summary */}
-      <View style={{ marginBottom: 16, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-        <CircularProgress size={32} strokeWidth={4} progress={progress} />
-        <Text style={{ color: "#aaa", fontSize: 16, marginLeft: 12 }}>
-          <Text style={{ color: "#fff" }}>{completedCount}</Text>
-          {" / "}
-          <Text style={{ color: "#fff" }}>{habits.length}</Text>
-          {" habits completed"}
-        </Text>
-      </View>
-
       {/* Modal Menu */}
       <Modal
         transparent

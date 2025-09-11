@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, useColorScheme } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity, FlatList, useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
 import { createGlobalStyles } from "@/styles/global";
 import { Category, categories } from "@/constants/Categories";
 import { colors } from "@/styles/colors";
-import { createHabit } from "@/services/habits"; 
+import { createHabit } from "@/services/habits";
 import YearDayPicker from "@/components/YearDayPicker";
 export default function AddHabitScreen() {
   // Colors
@@ -44,6 +44,11 @@ export default function AddHabitScreen() {
   const [endDate, setEndDate] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState<number | null>(null);
 
+  const handleCancel = async () => {
+    await cleanFields();
+    router.back();
+  }
+
   const cleanFields = async () => {
     setCategory(null);
     setAnswerType("yes_no");
@@ -61,62 +66,62 @@ export default function AddHabitScreen() {
   }
 
   const handleSubmit = async () => {
-  if (!category) return;
+    if (!category) return;
 
-  // Prepare recurrence fields for the backend
-  let recurrence_type = "daily";
-  let weekdays: string[] | null = null;
-  let month_days: number[] | null = null;
-  let year_days: string[] | null = null;
-  let interval_value: number | null = null;
+    // Prepare recurrence fields for the backend
+    let recurrence_type = "daily";
+    let weekdays: string[] | null = null;
+    let month_days: number[] | null = null;
+    let year_days: string[] | null = null;
+    let interval_value: number | null = null;
 
-  switch (recurrenceType) {
-    case "week_days":
-      recurrence_type = "weekly";
-      weekdays = selectedWeekDays.length ? selectedWeekDays : null;
-      break;
-    case "month_days":
-      recurrence_type = "monthly";
-      month_days = selectedMonthDays.length ? selectedMonthDays : null;
-      break;
-    case "year_days":
-      recurrence_type = "yearly";
-      year_days = yearDate ? [yearDate] : null;
-      break;
-    case "repeat":
-      recurrence_type = "interval";
-      interval_value = parseInt(repeatInterval) || 1;
-      break;
-    case "every_day":
-    default:
-      recurrence_type = "daily";
-      break;
-  }
+    switch (recurrenceType) {
+      case "week_days":
+        recurrence_type = "weekly";
+        weekdays = selectedWeekDays.length ? selectedWeekDays : null;
+        break;
+      case "month_days":
+        recurrence_type = "monthly";
+        month_days = selectedMonthDays.length ? selectedMonthDays : null;
+        break;
+      case "year_days":
+        recurrence_type = "yearly";
+        year_days = yearDate ? [yearDate] : null;
+        break;
+      case "repeat":
+        recurrence_type = "interval";
+        interval_value = parseInt(repeatInterval) || 1;
+        break;
+      case "every_day":
+      default:
+        recurrence_type = "daily";
+        break;
+    }
 
-  const payload = {
-    category: category.name,
-    answer_type: answerType,
-    name: name,
-    description: description,
-    recurrence_type: recurrence_type,
-    weekdays: weekdays,
-    month_days: month_days,
-    year_days: year_days,
-    interval_value: interval_value,
-    start_date: startDate,
-    end_date: endDate,
+    const payload = {
+      category: category.name,
+      answer_type: answerType,
+      name: name,
+      description: description,
+      recurrence_type: recurrence_type,
+      weekdays: weekdays,
+      month_days: month_days,
+      year_days: year_days,
+      interval_value: interval_value,
+      start_date: startDate,
+      end_date: endDate,
+    };
+    console.log("Submitting new habit with payload:", payload);
+
+    try {
+      const habit = await createHabit(payload);
+      await cleanFields();
+      console.log("Habit created:", habit);
+      router.back();
+    } catch (err) {
+      console.error("Error creating habit:", err);
+    }
   };
-  console.log("Submitting new habit with payload:", payload);
-
-  try {
-    const habit = await createHabit(payload);
-    await cleanFields();
-    console.log("Habit created:", habit);
-    router.back();
-  } catch (err) {
-    console.error("Error creating habit:", err);
-  }
-};
 
   return (
     <View style={styles.container}>
@@ -147,25 +152,32 @@ export default function AddHabitScreen() {
                       },
                     ]}
                   >
+                    {item.icon && (
+                      <View style={{ backgroundColor: item.color || "#eee", padding: 4, borderRadius: 6, marginRight: 8 }}>
+                        <Image
+                          source={item.icon}
+                          style={{
+                            width: 24,
+                            height: 24,
+                            tintColor: isSelected ? "#fff" : "#000", // optional: apply tint
+                          }}
+                          resizeMode="contain"
+                        />
+                      </View>
+                    )}
                     <Text
                       style={{
-                        fontSize: 16,
-                        fontWeight: "600",
+                        fontSize: 12,
+                        fontWeight: "500",
                         color: isSelected ? "#fff" : "#fff",
                         flexShrink: 1,
+                        textAlign: "left",
                       }}
                       numberOfLines={1}
                     >
                       {item.name}
                     </Text>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        color: isSelected ? "#fff" : "#aaa",
-                      }}
-                    >
-                      {item.icon}
-                    </Text>
+                    
                   </TouchableOpacity>
                 );
               }}
@@ -471,7 +483,7 @@ export default function AddHabitScreen() {
           </TouchableOpacity>
         )}
         {step === 0 && (
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => handleCancel()}>
             <Text style={styles.purpleText}>Cancel</Text>
           </TouchableOpacity>
         )}

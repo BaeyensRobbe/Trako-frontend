@@ -1,7 +1,8 @@
 // ./styles/colors.ts
 export const colors = {
   dark: {
-    background: "#00000c",
+    background: "#1a1a1cff",
+    secundaryBackground: "#121212ff",
     card: "#05051d",
     surface: "#232534",
     primary: "#894cff",
